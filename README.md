@@ -18,3 +18,21 @@ Aplicación backend desarrollada en .NET 8 con SQL Server.
 - Luego ejecutar `dotnet run`
 - A continuacion, se desplegara swagger con los endpoins documentados
 - Swagger se encontrara disponible en la url `http://localhost:8080/swagger/index.html`
+
+# Arquitectura
+La aplicación sigue un enfoque de arquitectura limpia con separación de responsabilidades en capas y proyectos. Esto permite mantener independencia entre dominio, lógica de aplicación, infraestructura y la capa de presentación (API).
+## Estructura del Proyecto
+
+```plaintext
+StarWarsWebApp
+├── src/                  
+│   ├── API               # Endpoints, controllers, configuración de middleware
+│   ├── Application       # Casos de uso, servicios, DTOs, validaciones
+│   ├── Domain            # Entidades de negocio, interfaces y contratos
+│   └── Infrastructure    # Persistencia (EF Core), repositorios, servicios externos
+│
+├── Tests/                
+│   ├── API.Test          # Pruebas de controladores, endpoints y middlewares
+│   ├── Application.Tests # Pruebas de lógica de negocio, servicios y validaciones
+│   └── Infrastructure.Test # Pruebas de repositorios y acceso a datos
+
