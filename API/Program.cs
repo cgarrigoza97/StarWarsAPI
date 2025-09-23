@@ -4,7 +4,9 @@ using Application.Interfaces.BackgroundServices;
 using Hangfire;
 using Infrastructure;
 using Infrastructure.Authentication;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using StarWarsWebApp.Infrastructure;
 using StarWarsWebApp.Middleware;
@@ -85,17 +87,19 @@ var app = builder.Build();
 
 if (app.Environment.EnvironmentName != "Testing")
 {
+    using var scope = app.Services.CreateScope();
+    
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await dbContext.Database.MigrateAsync();
+    
     app.UseHangfireDashboard("/hangfire", new DashboardOptions
     {
         Authorization = new[] { new HangfireAuthorizationFilter() }
     });
-
-    using var scope = app.Services.CreateScope();
+    
     var movieSyncService = scope.ServiceProvider.GetRequiredService<IMovieSyncBackgroundService>();
     movieSyncService.ScheduleRecurringSync();
 }
-
-await RoleSeedingService.SeedRolesAsync(app.Services);
 
 if (app.Environment.IsDevelopment())
 {
